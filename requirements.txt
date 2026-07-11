@@ -1,0 +1,8 @@
+psycopg2-binary==2.9.9
+pymysql==1.1.1
+pymongo==4.7.3
+cassandra-driver==3.29.1
+redis==5.0.7
+sqlalchemy==2.0.31
+cx_Oracle==8.3.0
+pytest==8.2.2
