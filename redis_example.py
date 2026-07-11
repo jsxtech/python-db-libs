@@ -1,12 +1,19 @@
+# python redis library example
+
 # Import the Redis library
 import redis
+import os
 
 r = None
 
 try:
 
     # Create a Redis client object
-    r = redis.Redis(host='localhost', port=6379, db=0)
+    r = redis.Redis(
+        host=os.environ.get('REDIS_HOST', 'localhost'),
+        port=int(os.environ.get('REDIS_PORT', '6379')),
+        db=int(os.environ.get('REDIS_DB', '0'))
+    )
 
     # Set a key-value pair
     r.set('name', 'Jaspal')
