@@ -6,8 +6,8 @@ import sqlite3
 conn = None
 
 try:
-    # Create a connection to the database
-    conn = sqlite3.connect('test.db')
+    # Create a connection to an in-memory database
+    conn = sqlite3.connect(':memory:')
 
     # Create a cursor object
     cur = conn.cursor()
