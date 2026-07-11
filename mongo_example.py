@@ -2,13 +2,16 @@
 
 # Import the PyMongo library
 import pymongo
+import os
 
 client = None
 
 try:
 
     # Create a client, database, and collection instances
-    client = pymongo.MongoClient('mongodb://localhost:27017/')
+    mongo_host = os.environ.get('MONGO_HOST', 'localhost')
+    mongo_port = os.environ.get('MONGO_PORT', '27017')
+    client = pymongo.MongoClient(f'mongodb://{mongo_host}:{mongo_port}/')
     db = client['my_database']
     collection = db['my_collection']
 
