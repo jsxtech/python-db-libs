@@ -2,6 +2,7 @@
 
 # Import the Cassandra driver
 from cassandra.cluster import Cluster
+import os
 
 cluster = None
 session = None
@@ -9,7 +10,9 @@ session = None
 try:
 
     # Create a session instance
-    cluster = Cluster(['127.0.0.1'])
+    cassandra_host = os.environ.get('CASSANDRA_HOST', '127.0.0.1')
+    cassandra_port = int(os.environ.get('CASSANDRA_PORT', '9042'))
+    cluster = Cluster([cassandra_host], port=cassandra_port)
     session = cluster.connect()
 
     # Create a keyspace
@@ -20,18 +23,18 @@ try:
 
     # Create a table
     session.execute("""
-        CREATE TABLE IF NOT EXISTS mykeyspace.mytable
-        (id int PRIMARY KEY, name text, age int)
+        CREATE TABLE IF NOT EXISTS mykeyspace.users
+        (id int PRIMARY KEY, name text, email text)
     """)
 
     # Insert a row using prepared statement
-    prepared = session.prepare("INSERT INTO mykeyspace.mytable (id, name, age) VALUES (?, ?, ?)")
-    session.execute(prepared, (1, 'Jaspal', 30))
+    prepared = session.prepare("INSERT INTO mykeyspace.users (id, name, email) VALUES (?, ?, ?)")
+    session.execute(prepared, (1, 'Jaspal', 'jaspal@mail.com'))
 
     # Query the table
-    rows = session.execute("SELECT * FROM mykeyspace.mytable")
+    rows = session.execute("SELECT * FROM mykeyspace.users")
     for row in rows:
-        print(row.id, row.name, row.age)
+        print(row.id, row.name, row.email)
 
 finally:
     # Close the session and cluster
