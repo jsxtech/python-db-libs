@@ -18,7 +18,7 @@ try:
     # Create a keyspace
     session.execute("""
         CREATE KEYSPACE IF NOT EXISTS mykeyspace
-        WITH replication = {'class': 'SimpleStrategy', 'replication_factor': '3'}
+        WITH replication = {'class': 'SimpleStrategy', 'replication_factor': '1'}
     """)
 
     # Create a table
