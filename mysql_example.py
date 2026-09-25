@@ -31,9 +31,6 @@ try:
         )
     ''')
 
-    # Commit the transaction
-    conn.commit()
-
     # Execute the query to insert data
     cur.execute('''
             INSERT INTO users (name, email) VALUES (%s, %s), (%s, %s)
