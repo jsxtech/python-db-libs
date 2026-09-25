@@ -1,6 +1,6 @@
 # python sqlalchemy orm example
 
-from sqlalchemy import create_engine, Column, Integer, String
+from sqlalchemy import create_engine, Column, Integer, String, select
 from sqlalchemy.orm import DeclarativeBase, sessionmaker
 
 # Create a database engine (using SQLite in-memory for demo)
@@ -42,7 +42,7 @@ try:
     session.commit()
 
     # Query the database for all users
-    users = session.query(User).all()
+    users = session.execute(select(User)).scalars().all()
 
     # Print the results
     for user in users:
