@@ -38,6 +38,7 @@ class TestPostgreSQL(unittest.TestCase):
 
         mock_connect.assert_called_once()
         mock_cursor.close.assert_called_once()
+        mock_conn.commit.assert_called()
         mock_conn.close.assert_called_once()
 
 
@@ -58,6 +59,7 @@ class TestMySQL(unittest.TestCase):
 
         mock_connect.assert_called_once()
         mock_cursor.close.assert_called_once()
+        mock_conn.commit.assert_called()
         mock_conn.close.assert_called_once()
 
 
@@ -91,7 +93,7 @@ class TestMongo(unittest.TestCase):
         sys.modules.pop('mongo_example', None)
         runpy.run_module('mongo_example', run_name='__main__')
 
-        mock_client.assert_called_once_with('mongodb://localhost:27017/')
+        mock_client.assert_called_once_with('localhost', 27017, serverSelectionTimeoutMS=2000)
         mock_instance.close.assert_called_once()
 
 
@@ -116,6 +118,51 @@ class TestOracle(unittest.TestCase):
         mock_connect.assert_called_once()
         mock_cursor.execute.assert_called()
         mock_cursor.close.assert_called_once()
+        mock_conn.commit.assert_called()
+        mock_conn.close.assert_called_once()
+
+    @patch('oracledb.connect')
+    @patch('oracledb.makedsn')
+    def test_oracle_swallows_ora_00955(self, mock_makedsn, mock_connect):
+        """CREATE TABLE raising ORA-00955 (table exists) must be swallowed."""
+        import oracledb
+        mock_makedsn.return_value = 'dsn'
+        mock_conn = MagicMock()
+        mock_cursor = MagicMock()
+        mock_cursor.fetchall.return_value = []
+
+        err = oracledb.DatabaseError()
+        err.args = (MagicMock(code=955),)
+        # First execute (CREATE TABLE) raises 955; subsequent calls succeed.
+        mock_cursor.execute.side_effect = [err, None, None]
+        mock_conn.cursor.return_value = mock_cursor
+        mock_connect.return_value = mock_conn
+
+        sys.modules.pop('oracle_example', None)
+        runpy.run_module('oracle_example', run_name='__main__')  # must not raise
+
+        mock_conn.close.assert_called_once()
+
+    @patch('oracledb.connect')
+    @patch('oracledb.makedsn')
+    def test_oracle_propagates_other_errors(self, mock_makedsn, mock_connect):
+        """A non-955 DatabaseError on CREATE TABLE must propagate."""
+        import oracledb
+        mock_makedsn.return_value = 'dsn'
+        mock_conn = MagicMock()
+        mock_cursor = MagicMock()
+
+        err = oracledb.DatabaseError()
+        err.args = (MagicMock(code=1017),)  # ORA-01017: invalid credential
+        mock_cursor.execute.side_effect = err
+        mock_conn.cursor.return_value = mock_cursor
+        mock_connect.return_value = mock_conn
+
+        sys.modules.pop('oracle_example', None)
+        with self.assertRaises(oracledb.DatabaseError):
+            runpy.run_module('oracle_example', run_name='__main__')
+
+        # finally block still closes the connection.
         mock_conn.close.assert_called_once()
 
 
