@@ -14,7 +14,7 @@ try:
         user=os.environ.get('PG_USER', 'username'),
         password=os.environ.get('PG_PASSWORD', 'password'),
         host=os.environ.get('PG_HOST', 'localhost'),
-        port=os.environ.get('PG_PORT', '5432')
+        port=int(os.environ.get('PG_PORT', '5432'))
     )
 
     # Create cursor object to execute database commands and queries
