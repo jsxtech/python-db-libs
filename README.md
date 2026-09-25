@@ -6,7 +6,7 @@ Python database library examples demonstrating connections and basic operations.
 - SQLite (sqlite3)
 - PostgreSQL (psycopg2)
 - MySQL (pymysql)
-- Oracle (cx_Oracle)
+- Oracle (python-oracledb)
 - MongoDB (pymongo)
 - Cassandra (cassandra-driver)
 - Redis (redis)
@@ -63,7 +63,7 @@ export REDIS_DB=0
 | sqlite_example.py | SQLite in-memory example |
 | postgresql_example.py | PostgreSQL with psycopg2 |
 | mysql_example.py | MySQL with PyMySQL |
-| oracle_example.py | Oracle with cx_Oracle |
+| oracle_example.py | Oracle with python-oracledb |
 | mongo_example.py | MongoDB with PyMongo |
 | cassandra_example.py | Cassandra with cassandra-driver |
 | redis_example.py | Redis operations |
@@ -86,4 +86,4 @@ python sqlalchemy_orm.py         # Works out of the box (SQLite)
 Note: PostgreSQL, MySQL, Oracle, MongoDB, Cassandra, and Redis examples require their respective database servers running and proper credentials configured via environment variables.
 
 ## Notes
-- **cx_Oracle deprecation**: The `cx_Oracle` package has been renamed to [`python-oracledb`](https://python-oracledb.readthedocs.io/). The `cx_Oracle` 8.3.0 release is the final version. For new projects, use `import oracledb` instead.
+- **Oracle driver**: These examples use [`python-oracledb`](https://python-oracledb.readthedocs.io/) (`import oracledb`), the successor to the deprecated `cx_Oracle`. The final `cx_Oracle` release was 8.3.0; new projects should use `python-oracledb`.
