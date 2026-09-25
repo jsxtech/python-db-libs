@@ -10,8 +10,9 @@ try:
 
     # Create a client, database, and collection instances
     mongo_host = os.environ.get('MONGO_HOST', 'localhost')
-    mongo_port = os.environ.get('MONGO_PORT', '27017')
-    client = pymongo.MongoClient(f'mongodb://{mongo_host}:{mongo_port}/')
+    mongo_port = int(os.environ.get('MONGO_PORT', '27017'))
+    # serverSelectionTimeoutMS keeps the example from blocking ~30s when no server is up.
+    client = pymongo.MongoClient(mongo_host, mongo_port, serverSelectionTimeoutMS=2000)
     db = client['my_database']
     collection = db['my_collection']
 
